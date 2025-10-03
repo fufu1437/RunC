@@ -55,8 +55,8 @@ def main():
             code = f"{code} -o {mainOutputPath}/{mainName}.exe"
 
     os.system(code)
-    sleep(0.5)
+    print(f"Success: Compiled to {mainName}.c\n")
     mainRunCode = f"{mainOutputPath}/{mainName}.exe"
     subprocess.run([mainRunCode])
-
+    print("\nRun End")
 main()
