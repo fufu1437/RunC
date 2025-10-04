@@ -8,7 +8,7 @@ import re
 import subprocess
 
 RunCConfig = {
-    "main_Nmae_And_Path":"",
+    "main_Name_And_Path":"",
     "main_Output_Path":"",
 
     "pack_Name_And_Path":{
@@ -27,16 +27,16 @@ def main():
             json.dump(RunCConfig ,f, indent=4)
         return 
 
-    main_Nmae_And_Path = config["main_Nmae_And_Path"]
+    main_Name_And_Path = config["main_Name_And_Path"]
     pack_Name_And_Path = config["pack_Name_And_Path"]
 
-    if re.search("/",main_Nmae_And_Path):
-        mainName = main_Nmae_And_Path[re.search("/",main_Nmae_And_Path).end():-2] # type: ignore
+    if re.search("/",main_Name_And_Path):
+        mainName = main_Name_And_Path[re.search("/",main_Name_And_Path).end():-2] # type: ignore
 
     else:
-        mainName = main_Nmae_And_Path[:-2]
+        mainName = main_Name_And_Path[:-2]
 
-    mainF = open(main_Nmae_And_Path,"r",encoding='utf-8')
+    mainF = open(main_Name_And_Path,"r",encoding='utf-8')
 
     for mainRead in mainF:
         if re.search("#include",mainRead):
@@ -44,7 +44,7 @@ def main():
 
     mainF.close()
     mainOutputPath = config["main_Output_Path"]
-    code =  f"gcc {main_Nmae_And_Path} "
+    code =  f"gcc {main_Name_And_Path} "
     for name ,path in pack_Name_And_Path.items():
         Calibration = True
         if name[:-2] in include:
