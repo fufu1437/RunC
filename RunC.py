@@ -5,12 +5,9 @@
 import json
 import os
 import re
-from time import sleep
 import subprocess
 
 RunCConfig = {
-    "gccPath":"",
-
     "main_Nmae_And_Path":"",
     "main_Output_Path":"",
 
@@ -19,13 +16,14 @@ RunCConfig = {
 }
 
 def main():
+    Calibration = False
     include = []
     try:
         f = open("RunCConfig.json","r")
         config = json.load(f)
         f.close()
     except FileNotFoundError:
-        with open("RunCConfig.json","w") as f:
+        with open("RunCConfig.json","w",encoding='utf-8') as f:
             json.dump(RunCConfig ,f, indent=4)
         return 
 
@@ -38,7 +36,7 @@ def main():
     else:
         mainName = main_Nmae_And_Path[:-2]
 
-    mainF = open(main_Nmae_And_Path,"r")
+    mainF = open(main_Nmae_And_Path,"r",encoding='utf-8')
 
     for mainRead in mainF:
         if re.search("#include",mainRead):
@@ -48,15 +46,23 @@ def main():
     mainOutputPath = config["main_Output_Path"]
     code =  f"gcc {main_Nmae_And_Path} "
     for name ,path in pack_Name_And_Path.items():
+        Calibration = True
         if name[:-2] in include:
             code = f"{code} {path}/{name} -I{path} -o {mainOutputPath}/{mainName}.exe"
-
         else:
             code = f"{code} -o {mainOutputPath}/{mainName}.exe"
-
+    if not Calibration:
+        if mainOutputPath.strip() == "":
+            code = f"{code} -o {mainName}.exe"
+        else:
+            code = f"{code} -o {mainOutputPath}/{mainName}.exe"
     os.system(code)
     print(f"Success: Compiled to {mainName}.c\n")
-    mainRunCode = f"{mainOutputPath}/{mainName}.exe"
+    if mainOutputPath.strip() != "":
+        mainRunCode = f"./{mainOutputPath}/{mainName}.exe"
+    else:
+        mainRunCode = f"./{mainName}.exe"
+    
     subprocess.run([mainRunCode])
     print("\nRun End")
 main()
